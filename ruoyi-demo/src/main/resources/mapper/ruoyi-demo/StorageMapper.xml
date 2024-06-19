@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.StorageMapper">
+
+    <resultMap type="com.ruoyi.domain.Storage" id="StorageResult">
+        <result property="id"    column="id"    />
+        <result property="storageName"    column="storage_name"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productId"    column="product_id"    />
+        <result property="prouctNumber"    column="prouct_number"    />
+    </resultMap>
+
+    <sql id="selectStorageVo">
+        select id, storage_name, product_name, product_id, prouct_number from storage
+    </sql>
+
+    <select id="selectStorageList" parameterType="com.ruoyi.domain.Storage" resultMap="StorageResult">
+        <include refid="selectStorageVo"/>
+        <where>
+            <if test="storageName != null  and storageName != ''"> and storage_name like concat('%', #{storageName}, '%')</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="prouctNumber != null "> and prouct_number = #{prouctNumber}</if>
+        </where>
+    </select>
+
+    <select id="selectStorageById" parameterType="Long" resultMap="StorageResult">
+        <include refid="selectStorageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStorage" parameterType="com.ruoyi.domain.Storage">
+        insert into storage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="storageName != null and storageName != ''">storage_name,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="prouctNumber != null">prouct_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="storageName != null and storageName != ''">#{storageName},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="prouctNumber != null">#{prouctNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStorage" parameterType="com.ruoyi.domain.Storage">
+        update storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storageName != null and storageName != ''">storage_name = #{storageName},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="prouctNumber != null">prouct_number = #{prouctNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateStorageByAllName" parameterType="com.ruoyi.domain.Storage">
+        update storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="prouctNumber != null">prouct_number = #{prouctNumber},</if>
+        </trim>
+        where storage_name = #{storageName} and product_name =#{productName}
+    </update>
+
+    <delete id="deleteStorageById" parameterType="Long">
+        delete from storage where id = #{id}
+    </delete>
+
+    <delete id="deleteStorageByIds" parameterType="String">
+        delete from storage where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectStorageByStorageName" resultMap="StorageResult">
+        select id, storage_name, product_name, product_id, prouct_number from storage where storage_name = #{storageName}
+    </select>
+
+    <select id="selectStorageByName" resultMap="StorageResult">
+        select id, storage_name, product_name, product_id, prouct_number from storage where storage_name = #{storageName}
+        and product_name = #{productName}
+    </select>
+</mapper>

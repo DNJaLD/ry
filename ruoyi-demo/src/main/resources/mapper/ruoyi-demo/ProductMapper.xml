@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.ProductMapper">
+
+    <resultMap type="com.ruoyi.domain.Product" id="ProductResult">
+        <result property="id"    column="id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="storageId"    column="storage_id"    />
+        <result property="storageName"    column="storage_name"    />
+        <result property="price"    column="price"    />
+        <result property="money"    column="money"    />
+    </resultMap>
+
+    <sql id="selectProductVo">
+        select id, product_name, storage_id, storage_name, price, money from product
+    </sql>
+
+    <select id="selectProductList" parameterType="com.ruoyi.domain.Product" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        <where>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="storageId != null "> and storage_id = #{storageId}</if>
+            <if test="storageName != null  and storageName != ''"> and storage_name like concat('%', #{storageName}, '%')</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="money != null "> and money = #{money}</if>
+        </where>
+    </select>
+
+    <select id="selectProductById" parameterType="Long" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectStorageByName" resultMap="ProductResult">
+        select id, product_name, storage_id, storage_name, price, money from product
+        where product_name = #{productName} and storage_name = #{stortageName}
+    </select>
+
+    <insert id="insertProduct" parameterType="com.ruoyi.domain.Product" useGeneratedKeys="true" keyProperty="id">
+        insert into product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="storageId != null">storage_id,</if>
+            <if test="storageName != null and storageName != ''">storage_name,</if>
+            <if test="price != null">price,</if>
+            <if test="money != null">money,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="storageId != null">#{storageId},</if>
+            <if test="storageName != null and storageName != ''">#{storageName},</if>
+            <if test="price != null">#{price},</if>
+            <if test="money != null">#{money},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProduct" parameterType="com.ruoyi.domain.Product">
+        update product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="storageId != null">storage_id = #{storageId},</if>
+            <if test="storageName != null and storageName != ''">storage_name = #{storageName},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="money != null">money = #{money},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductById" parameterType="Long">
+        delete from product where id = #{id}
+    </delete>
+
+    <delete id="deleteProductByIds" parameterType="String">
+        delete from product where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

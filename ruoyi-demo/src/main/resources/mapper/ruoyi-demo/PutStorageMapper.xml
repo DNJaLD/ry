@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.PutStorageMapper">
+
+    <resultMap type="com.ruoyi.domain.PutStorage" id="PutStorageResult">
+        <result property="id"    column="id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productNumber"    column="product_number"    />
+        <result property="price"    column="price"    />
+        <result property="money"    column="money"    />
+        <result property="stortageName"    column="stortage_name"    />
+    </resultMap>
+
+    <sql id="selectPutStorageVo">
+        select id, product_name, product_number, price, money, stortage_name from put_storage
+    </sql>
+
+    <select id="selectPutStorageList" parameterType="com.ruoyi.domain.PutStorage" resultMap="PutStorageResult">
+        <include refid="selectPutStorageVo"/>
+        <where>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="productNumber != null "> and product_number = #{productNumber}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="stortageName != null  and stortageName != ''"> and stortage_name like concat('%', #{stortageName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectPutStorageById" parameterType="Long" resultMap="PutStorageResult">
+        <include refid="selectPutStorageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPutStorage" parameterType="com.ruoyi.domain.PutStorage" useGeneratedKeys="true" keyProperty="id">
+        insert into put_storage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="productNumber != null">product_number,</if>
+            <if test="price != null">price,</if>
+            <if test="money != null">money,</if>
+            <if test="stortageName != null and stortageName != ''">stortage_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="productNumber != null">#{productNumber},</if>
+            <if test="price != null">#{price},</if>
+            <if test="money != null">#{money},</if>
+            <if test="stortageName != null and stortageName != ''">#{stortageName},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePutStorage" parameterType="com.ruoyi.domain.PutStorage">
+        update put_storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="productNumber != null">product_number = #{productNumber},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="stortageName != null and stortageName != ''">stortage_name = #{stortageName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePutStorageById" parameterType="Long">
+        delete from put_storage where id = #{id}
+    </delete>
+
+    <delete id="deletePutStorageByIds" parameterType="String">
+        delete from put_storage where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

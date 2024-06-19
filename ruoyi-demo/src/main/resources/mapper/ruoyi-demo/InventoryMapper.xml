@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.InventoryMapper">
+
+    <resultMap type="com.ruoyi.domain.Inventory" id="InventoryResult">
+        <result property="id"    column="id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="money"    column="money"    />
+        <result property="totalProduct"    column="total_product"    />
+        <result property="inventoryPrice"    column="inventory_price"    />
+    </resultMap>
+
+    <sql id="selectInventoryVo">
+        select id, product_name, money, total_product, inventory_price from inventory
+    </sql>
+
+    <select id="selectInventoryList" parameterType="com.ruoyi.domain.Inventory" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        <where>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="totalProduct != null "> and total_product = #{totalProduct}</if>
+            <if test="inventoryPrice != null "> and inventory_price = #{inventoryPrice}</if>
+        </where>
+    </select>
+
+    <select id="selectInventoryById" parameterType="Long" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectInventoryByName" resultMap="InventoryResult">
+        select id, product_name, money, total_product, inventory_price from inventory
+        where product_name = #{productName}
+    </select>
+
+    <insert id="insertInventory" parameterType="com.ruoyi.domain.Inventory" useGeneratedKeys="true" keyProperty="id">
+        insert into inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="money != null">money,</if>
+            <if test="totalProduct != null">total_product,</if>
+            <if test="inventoryPrice != null">inventory_price,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="money != null">#{money},</if>
+            <if test="totalProduct != null">#{totalProduct},</if>
+            <if test="inventoryPrice != null">#{inventoryPrice},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInventory" parameterType="com.ruoyi.domain.Inventory">
+        update inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="totalProduct != null">total_product = #{totalProduct},</if>
+            <if test="inventoryPrice != null">inventory_price = #{inventoryPrice},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateInventoryByName" parameterType="com.ruoyi.domain.Inventory">
+        update inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="money != null">money = #{money},</if>
+            <if test="totalProduct != null">total_product = #{totalProduct},</if>
+            <if test="inventoryPrice != null">inventory_price = #{inventoryPrice},</if>
+        </trim>
+        where  product_name = #{productName}
+    </update>
+
+    <delete id="deleteInventoryById" parameterType="Long">
+        delete from inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteInventoryByIds" parameterType="String">
+        delete from inventory where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
