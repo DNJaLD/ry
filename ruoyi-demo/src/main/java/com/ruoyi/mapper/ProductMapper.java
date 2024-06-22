@@ -66,4 +66,5 @@ public interface ProductMapper
      * @return 结果
      */
     Product selectStorageByName(@Param("productName") String productName, @Param("stortageName") String stortageName);
+
 }

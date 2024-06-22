@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * chuku对象 get_storage
  * 
  * @author ruoyi
- * @date 2024-06-19
+ * @date 2024-06-20
  */
 public class GetStorage extends BaseEntity
 {
@@ -22,20 +22,13 @@ public class GetStorage extends BaseEntity
     @Excel(name = "商品名称")
     private String productName;
 
-    /** 仓库名称 */
-    @Excel(name = "仓库名称")
-    private String storageName;
-
     /** 商品数量 */
     @Excel(name = "商品数量")
     private Long productNumber;
 
-    /** 库存id */
-    private Long inventoryId;
-
-    /** 单价 */
-    @Excel(name = "单价")
-    private Long price;
+    /** 仓库名 */
+    @Excel(name = "仓库名")
+    private String stortageName;
 
     public void setId(Long id) 
     {
@@ -55,15 +48,6 @@ public class GetStorage extends BaseEntity
     {
         return productName;
     }
-    public void setStorageName(String storageName) 
-    {
-        this.storageName = storageName;
-    }
-
-    public String getStorageName() 
-    {
-        return storageName;
-    }
     public void setProductNumber(Long productNumber) 
     {
         this.productNumber = productNumber;
@@ -73,23 +57,14 @@ public class GetStorage extends BaseEntity
     {
         return productNumber;
     }
-    public void setInventoryId(Long inventoryId) 
+    public void setStortageName(String stortageName) 
     {
-        this.inventoryId = inventoryId;
+        this.stortageName = stortageName;
     }
 
-    public Long getInventoryId() 
+    public String getStortageName() 
     {
-        return inventoryId;
-    }
-    public void setPrice(Long price) 
-    {
-        this.price = price;
-    }
-
-    public Long getPrice() 
-    {
-        return price;
+        return stortageName;
     }
 
     @Override
@@ -97,10 +72,8 @@ public class GetStorage extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("productName", getProductName())
-            .append("storageName", getStorageName())
             .append("productNumber", getProductNumber())
-            .append("inventoryId", getInventoryId())
-            .append("price", getPrice())
+            .append("stortageName", getStortageName())
             .toString();
     }
 }

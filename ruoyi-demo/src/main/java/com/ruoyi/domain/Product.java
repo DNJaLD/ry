@@ -30,13 +30,7 @@ public class Product extends BaseEntity
     @Excel(name = "仓库名称")
     private String storageName;
 
-    /** 商品单价 */
-    @Excel(name = "商品单价")
-    private Long price;
 
-    /** 金额 */
-    @Excel(name = "金额")
-    private Long money;
 
     public void setId(Long id) 
     {
@@ -74,24 +68,6 @@ public class Product extends BaseEntity
     {
         return storageName;
     }
-    public void setPrice(Long price) 
-    {
-        this.price = price;
-    }
-
-    public Long getPrice() 
-    {
-        return price;
-    }
-    public void setMoney(Long money) 
-    {
-        this.money = money;
-    }
-
-    public Long getMoney() 
-    {
-        return money;
-    }
 
     @Override
     public String toString() {
@@ -100,8 +76,7 @@ public class Product extends BaseEntity
             .append("productName", getProductName())
             .append("storageId", getStorageId())
             .append("storageName", getStorageName())
-            .append("price", getPrice())
-            .append("money", getMoney())
+
             .toString();
     }
 }

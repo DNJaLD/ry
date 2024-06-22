@@ -1,6 +1,7 @@
 package com.ruoyi.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.ruoyi.domain.Inventory;
@@ -9,6 +10,8 @@ import com.ruoyi.domain.Storage;
 import com.ruoyi.mapper.InventoryMapper;
 import com.ruoyi.mapper.ProductMapper;
 import com.ruoyi.mapper.StorageMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.mapper.PutStorageMapper;
@@ -24,6 +27,7 @@ import com.ruoyi.service.IPutStorageService;
 @Service
 public class PutStorageServiceImpl implements IPutStorageService
 {
+    private static final Logger log = LoggerFactory.getLogger(PutStorageServiceImpl.class);
     @Autowired
     private PutStorageMapper putStorageMapper;
 
@@ -100,8 +104,6 @@ public class PutStorageServiceImpl implements IPutStorageService
                 p.setProductName(putStorage.getProductName());
                 p.setStorageName(putStorage.getStortageName());
                 p.setStorageId(storage.getId());
-                p.setPrice(putStorage.getPrice());
-                p.setMoney(putStorage.getPrice()*putStorage.getProductNumber());
                 productMapper.insertProduct(p);
                 Product product = productMapper.selectStorageByName(putStorage.getProductName(),putStorage.getStortageName());
 
@@ -116,9 +118,9 @@ public class PutStorageServiceImpl implements IPutStorageService
                 if (info==null){
                     Inventory i = new Inventory();
                     i.setProductName(putStorage.getProductName());
-                    i.setMoney(p.getMoney());
                     i.setTotalProduct(putStorage.getProductNumber());
                     i.setInventoryPrice(putStorage.getPrice());
+                    i.setMoney(putStorage.getProductNumber()*putStorage.getPrice());
                     inventoryMapper.insertInventory(i);
                 }else {
                     Inventory inventory = new Inventory();
@@ -140,21 +142,26 @@ public class PutStorageServiceImpl implements IPutStorageService
 
                 //获取该商品仓库的数量
                 Storage storageByName = storageMapper.selectStorageByName(putStorage.getProductName(), putStorage.getStortageName());
+
                 s.setProuctNumber(putStorage.getProductNumber()+storageByName.getProuctNumber());
+
                 s.setProductName(putStorage.getProductName());
+
                 s.setStorageName(putStorage.getStortageName());
+
                 storageMapper.updateStorageByAllName(s);
-                //更新商品
-                Product p = new Product();
-                p.setMoney(putStorage.getMoney());
-                productMapper.updateProduct(p);
                 //更新库存
                 //获取该商品库存中的数据
                 Inventory info = inventoryMapper.selectInventoryByName(putStorage.getProductName());
+
                 Inventory inventory = new Inventory();
+
                 inventory.setProductName(putStorage.getProductName());
+
                 inventory.setMoney(info.getMoney()+putStorage.getPrice()*putStorage.getProductNumber());
+
                 inventory.setTotalProduct(info.getTotalProduct()+putStorage.getProductNumber());
+
                 inventory.setInventoryPrice(inventory.getMoney()/inventory.getTotalProduct());
                 inventoryMapper.updateInventoryByName(inventory);
 
@@ -164,7 +171,7 @@ public class PutStorageServiceImpl implements IPutStorageService
         }else {
 
             System.out.println("4444444444444");
-            //没有这个仓库 || 有仓库但没商品
+            //没有这个仓库
             //1存入仓库记录
             Storage s = new Storage();
             s.setProductName(putStorage.getProductName());
@@ -178,8 +185,6 @@ public class PutStorageServiceImpl implements IPutStorageService
             p.setProductName(putStorage.getProductName());
             p.setStorageName(putStorage.getStortageName());
             p.setStorageId(storage.getId());
-            p.setPrice(putStorage.getPrice());
-            p.setMoney(putStorage.getPrice()*putStorage.getProductNumber());
             productMapper.insertProduct(p);
             Product product = productMapper.selectStorageByName(putStorage.getProductName(),putStorage.getStortageName());
 
@@ -192,9 +197,10 @@ public class PutStorageServiceImpl implements IPutStorageService
             if (inventory==null){
                 Inventory i = new Inventory();
                 i.setProductName(putStorage.getProductName());
-                i.setMoney(p.getMoney());
+
                 i.setTotalProduct(putStorage.getProductNumber());
                 i.setInventoryPrice(putStorage.getPrice());
+                i.setMoney(putStorage.getProductNumber()*putStorage.getPrice());
                 inventoryMapper.insertInventory(i);
             }else {
                 System.out.println(inventory.toString());
@@ -215,14 +221,121 @@ public class PutStorageServiceImpl implements IPutStorageService
     /**
      * 修改ruku
      *
-     * @param putStorage ruku
+     * @param newPutStorage ruku
      * @return 结果
      */
     @Override
-    public int updatePutStorage(PutStorage putStorage)
+    public int updatePutStorage(PutStorage newPutStorage)
     {
-        return putStorageMapper.updatePutStorage(putStorage);
+
+        //可以修改的有 商品数量 、单价
+
+        //获取以前的入库单数据
+        PutStorage oldPutStorage = putStorageMapper.selectPutStorageById(newPutStorage.getId());
+
+        Long newPrice = newPutStorage.getPrice();
+        Long newNumber = newPutStorage.getProductNumber();
+        Long newMoney = newPrice*newNumber;
+
+        Long oldPrice = oldPutStorage.getPrice();
+        Long oldNumber = oldPutStorage.getProductNumber();
+        Long oldMoney = oldPutStorage.getMoney();
+
+        String productName = newPutStorage.getProductName();
+        String storageName = newPutStorage.getStortageName();
+
+        System.out.println( oldPutStorage);
+
+        Storage oldStorage = storageMapper.selectStorageByName(productName, storageName);
+
+
+        Inventory inventory = inventoryMapper.selectInventoryByName(productName);
+
+        //判断有那些属性修改了
+        //1.没改东西
+            if(Objects.equals(oldPrice,newPrice) && oldNumber.equals(newNumber)){
+                return 1 ;
+            }
+            //两个都改了
+            else if (!Objects.equals(oldPrice,newPrice) && !oldNumber.equals(newNumber)){
+
+
+                //更具productName和stortageName更新仓库
+                Storage s = new Storage() ;
+                s.setStorageName(storageName);
+                s.setProductName(productName);
+                s.setProuctNumber((newNumber-oldNumber)+oldStorage.getProuctNumber());
+                storageMapper.updateStorageByAllName(s);
+
+                //更具productName更新库存
+
+                Inventory i = new Inventory();;
+                Long FNumber = newNumber - oldNumber ;
+                Long FMoney =  newMoney - oldMoney ;
+                //计算单价
+                Long FPrice = (FMoney + inventory.getMoney()) / (FNumber + inventory.getTotalProduct());
+                i.setInventoryPrice(FPrice);
+                i.setTotalProduct(inventory.getTotalProduct()+FNumber);
+                i.setMoney(FMoney+inventory.getMoney());
+                i.setProductName(productName);
+                inventoryMapper.updateInventoryByName(i);
+
+                //更新入库单
+                newPutStorage.setMoney(newPrice*newNumber);
+                return putStorageMapper.updatePutStorage(newPutStorage);
+
+            }
+            //改了单价
+            else if (!Objects.equals(oldPrice,newPrice) && oldNumber.equals(newNumber)) {
+
+                //更具productName更新库存
+
+                Inventory i = new Inventory();
+                Long FNumber = oldNumber ;
+                Long FMoney =  newMoney - oldMoney ;
+                //计算单价
+                Long FPrice = (FMoney + inventory.getMoney()) / (FNumber + inventory.getTotalProduct());
+                i.setInventoryPrice(FPrice);
+//                i.setTotalProduct(inventory.getTotalProduct()+FNumber);
+                i.setMoney(inventory.getMoney()+FMoney);
+                i.setProductName(productName);
+                inventoryMapper.updateInventoryByName(i);
+
+
+                newPutStorage.setMoney(newPrice*newNumber);
+                return putStorageMapper.updatePutStorage(newPutStorage);
+            }
+            //改了数量
+            else if (Objects.equals(oldPrice,newPrice) && !oldNumber.equals(newNumber)) {
+
+                //更具productName和stortageName更新仓库
+                Storage s = new Storage() ;
+                s.setStorageName(storageName);
+                s.setProductName(productName);
+                s.setProuctNumber((newNumber-oldNumber)+oldStorage.getProuctNumber());
+                storageMapper.updateStorageByAllName(s);
+
+                //更具productName更新库存
+                Inventory i = new Inventory();;
+                Long FNumber = newNumber - oldNumber ;
+                Long FMoney =  newMoney - oldMoney ;
+                //计算单价
+                Long FPrice = (FMoney + inventory.getMoney()) / (FNumber + inventory.getTotalProduct());
+                i.setInventoryPrice(FPrice);
+                i.setTotalProduct(inventory.getTotalProduct()+FNumber);
+
+                i.setMoney(FMoney+inventory.getMoney());
+                i.setProductName(productName);
+                inventoryMapper.updateInventoryByName(i);
+                return putStorageMapper.updatePutStorage(newPutStorage);
+            }
+            else {
+                return 0 ;
+            }
+
+//        return putStorageMapper.updatePutStorage(putStorage);
     }
+
 
     /**
      * 批量删除ruku
@@ -245,6 +358,25 @@ public class PutStorageServiceImpl implements IPutStorageService
     @Override
     public int deletePutStorageById(Long id)
     {
-        return putStorageMapper.deletePutStorageById(id);
+        PutStorage putStorage = putStorageMapper.selectPutStorageById(id);
+
+        String DProductName = putStorage.getProductName();
+        String DStortageName = putStorage.getStortageName();
+        Long DPrice = putStorage.getPrice();
+        Long DMoney = putStorage.getMoney();
+        Long DProductNumber = putStorage.getProductNumber();
+
+        //跟新商品
+        Product product = productMapper.selectStorageByName(DProductName, DStortageName);
+        Product p = new Product();
+        //跟新仓库
+
+        //更新库存
+
+        //删除入库单
+
+
+        return 0 ;
+//        return putStorageMapper.deletePutStorageById(id);
     }
 }

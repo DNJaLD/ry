@@ -9,12 +9,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="productName"    column="product_name"    />
         <result property="storageId"    column="storage_id"    />
         <result property="storageName"    column="storage_name"    />
-        <result property="price"    column="price"    />
-        <result property="money"    column="money"    />
     </resultMap>
 
     <sql id="selectProductVo">
-        select id, product_name, storage_id, storage_name, price, money from product
+        select id, product_name, storage_id, storage_name from product
     </sql>
 
     <select id="selectProductList" parameterType="com.ruoyi.domain.Product" resultMap="ProductResult">
@@ -23,8 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
             <if test="storageId != null "> and storage_id = #{storageId}</if>
             <if test="storageName != null  and storageName != ''"> and storage_name like concat('%', #{storageName}, '%')</if>
-            <if test="price != null "> and price = #{price}</if>
-            <if test="money != null "> and money = #{money}</if>
+
         </where>
     </select>
 
@@ -33,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
     <select id="selectStorageByName" resultMap="ProductResult">
-        select id, product_name, storage_id, storage_name, price, money from product
+        select id, product_name, storage_id, storage_name from product
         where product_name = #{productName} and storage_name = #{stortageName}
     </select>
 
@@ -43,15 +40,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productName != null and productName != ''">product_name,</if>
             <if test="storageId != null">storage_id,</if>
             <if test="storageName != null and storageName != ''">storage_name,</if>
-            <if test="price != null">price,</if>
-            <if test="money != null">money,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productName != null and productName != ''">#{productName},</if>
             <if test="storageId != null">#{storageId},</if>
             <if test="storageName != null and storageName != ''">#{storageName},</if>
-            <if test="price != null">#{price},</if>
-            <if test="money != null">#{money},</if>
          </trim>
     </insert>
 
@@ -61,8 +54,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productName != null and productName != ''">product_name = #{productName},</if>
             <if test="storageId != null">storage_id = #{storageId},</if>
             <if test="storageName != null and storageName != ''">storage_name = #{storageName},</if>
-            <if test="price != null">price = #{price},</if>
-            <if test="money != null">money = #{money},</if>
         </trim>
         where id = #{id}
     </update>

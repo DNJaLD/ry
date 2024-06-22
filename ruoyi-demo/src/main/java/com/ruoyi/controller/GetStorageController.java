@@ -2,6 +2,8 @@ package com.ruoyi.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.vo.GetStorageInfoVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +25,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * chukuController
- * 
+ *
  * @author ruoyi
- * @date 2024-06-19
+ * @date 2024-06-20
  */
 @RestController
 @RequestMapping("/ruoyi-demo/getstorage")
@@ -86,9 +88,18 @@ public class GetStorageController extends BaseController
     @PreAuthorize("@ss.hasPermi('ruoyi-demo:getstorage:edit')")
     @Log(title = "chuku", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody GetStorage getStorage)
+    public AjaxResult edit(@RequestBody GetStorageInfoVo getStorage)
     {
-        return toAjax(getStorageService.updateGetStorage(getStorage));
+        System.out.println("出库但修改数据==="+getStorage);
+        int i = getStorageService.updateGetStorage(getStorage);
+        if (i==0){
+            return warn("超过该仓库商品数量总数");
+        }else if (i==1){
+            return toAjax(1);
+        }else {
+            return error();
+        }
+//        return toAjax(1);
     }
 
     /**

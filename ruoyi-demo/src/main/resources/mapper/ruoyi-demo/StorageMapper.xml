@@ -10,10 +10,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="productName"    column="product_name"    />
         <result property="productId"    column="product_id"    />
         <result property="prouctNumber"    column="prouct_number"    />
+        <result property="productPrice"    column="product_price"    />
     </resultMap>
 
     <sql id="selectStorageVo">
-        select id, storage_name, product_name, product_id, prouct_number from storage
+        select id, storage_name, product_name, product_id, prouct_number , product_price from storage
     </sql>
 
     <select id="selectStorageList" parameterType="com.ruoyi.domain.Storage" resultMap="StorageResult">
@@ -80,11 +81,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="selectStorageByStorageName" resultMap="StorageResult">
-        select id, storage_name, product_name, product_id, prouct_number from storage where storage_name = #{storageName}
+        select id, storage_name, product_name, product_id, prouct_number ,product_price from storage where storage_name = #{storageName}
     </select>
 
     <select id="selectStorageByName" resultMap="StorageResult">
-        select id, storage_name, product_name, product_id, prouct_number from storage where storage_name = #{storageName}
+        select id, storage_name, product_name, product_id, prouct_number , product_price from storage where storage_name = #{storageName}
         and product_name = #{productName}
     </select>
 </mapper>

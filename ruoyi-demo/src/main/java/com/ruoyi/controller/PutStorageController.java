@@ -91,6 +91,10 @@ public class PutStorageController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody PutStorage putStorage)
     {
+
+        System.out.println("修改的数据======="+putStorage);
+
+
         return toAjax(putStorageService.updatePutStorage(putStorage));
     }
 

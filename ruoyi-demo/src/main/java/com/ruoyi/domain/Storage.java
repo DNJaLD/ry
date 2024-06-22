@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * cangku对象 storage
- * 
+ *
  * @author ruoyi
  * @date 2024-06-19
  */
@@ -33,48 +33,51 @@ public class Storage extends BaseEntity
     @Excel(name = "商品数量")
     private Long prouctNumber;
 
-    public void setId(Long id) 
+    @Excel(name="danjia")
+    private Long productPrice ;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setStorageName(String storageName) 
+    public void setStorageName(String storageName)
     {
         this.storageName = storageName;
     }
 
-    public String getStorageName() 
+    public String getStorageName()
     {
         return storageName;
     }
-    public void setProductName(String productName) 
+    public void setProductName(String productName)
     {
         this.productName = productName;
     }
 
-    public String getProductName() 
+    public String getProductName()
     {
         return productName;
     }
-    public void setProductId(Long productId) 
+    public void setProductId(Long productId)
     {
         this.productId = productId;
     }
 
-    public Long getProductId() 
+    public Long getProductId()
     {
         return productId;
     }
-    public void setProuctNumber(Long prouctNumber) 
+    public void setProuctNumber(Long prouctNumber)
     {
         this.prouctNumber = prouctNumber;
     }
 
-    public Long getProuctNumber() 
+    public Long getProuctNumber()
     {
         return prouctNumber;
     }
@@ -87,6 +90,15 @@ public class Storage extends BaseEntity
             .append("productName", getProductName())
             .append("productId", getProductId())
             .append("prouctNumber", getProuctNumber())
+                .append("price", getProductPrice())
             .toString();
+    }
+
+    public Long getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(Long productPrice) {
+        this.productPrice = productPrice;
     }
 }

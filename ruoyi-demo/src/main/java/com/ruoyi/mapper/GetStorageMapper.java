@@ -7,7 +7,7 @@ import com.ruoyi.domain.GetStorage;
  * chukuMapper接口
  * 
  * @author ruoyi
- * @date 2024-06-19
+ * @date 2024-06-20
  */
 public interface GetStorageMapper 
 {

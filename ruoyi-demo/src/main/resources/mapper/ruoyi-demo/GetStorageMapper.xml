@@ -3,62 +3,51 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mapper.GetStorageMapper">
-    
-    <resultMap type="GetStorage" id="GetStorageResult">
+
+    <resultMap type="com.ruoyi.domain.GetStorage" id="GetStorageResult">
         <result property="id"    column="id"    />
         <result property="productName"    column="product_name"    />
-        <result property="storageName"    column="storage_name"    />
         <result property="productNumber"    column="product_number"    />
-        <result property="inventoryId"    column="inventory_id"    />
-        <result property="price"    column="price"    />
+        <result property="stortageName"    column="stortage_name"    />
     </resultMap>
 
     <sql id="selectGetStorageVo">
-        select id, product_name, storage_name, product_number, inventory_id, price from get_storage
+        select id, product_name, product_number, stortage_name from get_storage
     </sql>
 
-    <select id="selectGetStorageList" parameterType="GetStorage" resultMap="GetStorageResult">
+    <select id="selectGetStorageList" parameterType="com.ruoyi.domain.GetStorage" resultMap="GetStorageResult">
         <include refid="selectGetStorageVo"/>
-        <where>  
+        <where>
             <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
-            <if test="storageName != null  and storageName != ''"> and storage_name like concat('%', #{storageName}, '%')</if>
-            <if test="productNumber != null "> and product_number = #{productNumber}</if>
-            <if test="inventoryId != null "> and inventory_id = #{inventoryId}</if>
-            <if test="price != null "> and price = #{price}</if>
+            <if test="stortageName != null  and stortageName != ''"> and stortage_name like concat('%', #{stortageName}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectGetStorageById" parameterType="Long" resultMap="GetStorageResult">
         <include refid="selectGetStorageVo"/>
         where id = #{id}
     </select>
 
-    <insert id="insertGetStorage" parameterType="GetStorage" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGetStorage" parameterType="com.ruoyi.domain.GetStorage" useGeneratedKeys="true" keyProperty="id">
         insert into get_storage
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="productName != null and productName != ''">product_name,</if>
-            <if test="storageName != null and storageName != ''">storage_name,</if>
             <if test="productNumber != null">product_number,</if>
-            <if test="inventoryId != null">inventory_id,</if>
-            <if test="price != null">price,</if>
+            <if test="stortageName != null and stortageName != ''">stortage_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productName != null and productName != ''">#{productName},</if>
-            <if test="storageName != null and storageName != ''">#{storageName},</if>
             <if test="productNumber != null">#{productNumber},</if>
-            <if test="inventoryId != null">#{inventoryId},</if>
-            <if test="price != null">#{price},</if>
+            <if test="stortageName != null and stortageName != ''">#{stortageName},</if>
          </trim>
     </insert>
 
-    <update id="updateGetStorage" parameterType="GetStorage">
+    <update id="updateGetStorage" parameterType="com.ruoyi.domain.GetStorage">
         update get_storage
         <trim prefix="SET" suffixOverrides=",">
             <if test="productName != null and productName != ''">product_name = #{productName},</if>
-            <if test="storageName != null and storageName != ''">storage_name = #{storageName},</if>
             <if test="productNumber != null">product_number = #{productNumber},</if>
-            <if test="inventoryId != null">inventory_id = #{inventoryId},</if>
-            <if test="price != null">price = #{price},</if>
+            <if test="stortageName != null and stortageName != ''">stortage_name = #{stortageName},</if>
         </trim>
         where id = #{id}
     </update>
@@ -68,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteGetStorageByIds" parameterType="String">
-        delete from get_storage where id in 
+        delete from get_storage where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
