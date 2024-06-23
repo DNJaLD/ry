@@ -1,8 +1,10 @@
 package com.ruoyi.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.ruoyi.domain.Inventory;
+import com.ruoyi.domain.PutStorage;
 import com.ruoyi.domain.Storage;
 import com.ruoyi.mapper.InventoryMapper;
 import com.ruoyi.mapper.StorageMapper;
@@ -81,6 +83,29 @@ public class GetStorageServiceImpl implements IGetStorageService
     @Override
     public int insertGetStorage(GetStorage getStorage)
     {
+
+        System.out.println("操作中+++++++++++++++++++++\t++++++++++++++++++++++");
+        Storage storage = storageMapper.selectStorageByName(getStorage.getProductName(), getStorage.getStortageName());
+
+        if (getStorage.getProductNumber()>storage.getProuctNumber()){
+            //输入的数量大于仓库数量了
+            return 0;
+        } else if (Objects.equals(getStorage.getProductNumber(), storage.getProuctNumber())) {
+            //如果这张出库单取出了所有的商品那么就删除仓库中这个商品的记录
+            storageMapper.deleteStorageById(storage.getId());
+        }
+
+        storage.setProuctNumber(storage.getProuctNumber() - getStorage.getProductNumber());
+        storageMapper.updateStorage(storage);
+
+        Inventory inventory = inventoryMapper.selectInventoryByName(getStorage.getProductName());
+
+        inventory.setTotalProduct(inventory.getTotalProduct() - getStorage.getProductNumber());
+        inventory.setMoney(inventory.getMoney() - storage.getProductPrice()*getStorage.getProductNumber());
+        inventory.setInventoryPrice(inventory.getMoney() / inventory.getTotalProduct());
+
+        inventoryMapper.updateInventory(inventory);
+
         return getStorageMapper.insertGetStorage(getStorage);
     }
 
@@ -95,19 +120,24 @@ public class GetStorageServiceImpl implements IGetStorageService
     {
         GetStorage getStorage = new GetStorage();
         BeanUtils.copyProperties(getStorageInfoVo, getStorage);
+        Storage storage = null ;
         //判断受否超过总数量
         if (getStorageInfoVo.getAllNumber()<=getStorageInfoVo.getProductNumber()){
             return 0 ;
-        }
-        //更新仓库仓库
-        Storage storage =  storageMapper.selectStorageByName(getStorageInfoVo.getProductName(),getStorageInfoVo.getStortageName());
+        }else if (getStorageInfoVo.getAllNumber().equals(getStorageInfoVo.getProductNumber())){
+            storageMapper.deleteStorageByAllName(getStorageInfoVo.getProductName(),getStorageInfoVo.getStortageName());
+        }else {
+            //更新仓库仓库
+             storage =  storageMapper.selectStorageByName(getStorageInfoVo.getProductName(),getStorageInfoVo.getStortageName());
 
-        storage.setProuctNumber(
-                storage.getProuctNumber()
-                        +getStorageInfoVo.getOldProductNumber()
-                        -getStorageInfoVo.getProductNumber()
-        );
-        storageMapper.updateStorage(storage);
+            storage.setProuctNumber(
+                    storage.getProuctNumber()
+                            +getStorageInfoVo.getOldProductNumber()
+                            -getStorageInfoVo.getProductNumber()
+            );
+            storageMapper.updateStorage(storage);
+
+        }
 
         //更新库存
         Inventory inventory = inventoryMapper.selectInventoryByName(getStorageInfoVo.getProductName());
@@ -140,7 +170,42 @@ public class GetStorageServiceImpl implements IGetStorageService
     @Override
     public int deleteGetStorageByIds(Long[] ids)
     {
-        return getStorageMapper.deleteGetStorageByIds(ids);
+
+        for (Long id : ids) {
+            GetStorage getStorage = getStorageMapper.selectGetStorageById(id);
+
+            String DProductName = getStorage.getProductName();
+            String DStortageName = getStorage.getStortageName();
+//            Long DPrice = getStorage.getPrice();
+//            Long DMoney = getStorage.getMoney();
+            Long DProductNumber = getStorage.getProductNumber();
+
+
+            //跟新仓库
+            Storage storage = storageMapper.selectStorageByName(DProductName, DStortageName);
+
+            if (storage.getProuctNumber()-getStorage.getProductNumber()<0){
+                return 0 ;
+            }
+            Long productPrice = storage.getProductPrice();
+
+            storage.setProuctNumber(storage.getProuctNumber()+DProductNumber);
+
+            //更新库存
+            Inventory inventory = inventoryMapper.selectInventoryByName(DProductName);
+
+            inventory.setTotalProduct(inventory.getTotalProduct()+DProductNumber);
+            inventory.setMoney(inventory.getMoney()+productPrice*DProductNumber);
+            inventory.setInventoryPrice(inventory.getMoney() / inventory.getTotalProduct());
+
+            inventoryMapper.updateInventory(inventory);
+
+            //删除入库单
+
+            getStorageMapper.deleteGetStorageById(id);
+        }
+
+        return 1 ;
     }
 
     /**
@@ -153,5 +218,20 @@ public class GetStorageServiceImpl implements IGetStorageService
     public int deleteGetStorageById(Long id)
     {
         return getStorageMapper.deleteGetStorageById(id);
+    }
+
+    @Override
+    public GetStorageInfoVo selectGetStorageByAllName(GetStorage getStorage) {
+        Storage storage = storageMapper.selectStorageByName(getStorage.getProductName(), getStorage.getStortageName());
+
+        GetStorageInfoVo getStorageInfoVo = new GetStorageInfoVo() ;
+        getStorageInfoVo.setProductName(getStorage.getProductName());
+        getStorageInfoVo.setStortageName(getStorage.getStortageName());
+        getStorageInfoVo.setOldProductNumber(getStorage.getProductNumber());
+
+        getStorageInfoVo.setAllNumber(storage.getProuctNumber());
+        getStorageInfoVo.setProductPrice(storage.getProductPrice());
+        getStorageInfoVo.setMoney(storage.getProuctNumber()*storage.getProductPrice());
+        return getStorageInfoVo;
     }
 }

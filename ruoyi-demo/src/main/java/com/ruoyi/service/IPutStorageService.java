@@ -1,7 +1,11 @@
 package com.ruoyi.service;
 
 import java.util.List;
+
+import com.ruoyi.domain.GetStorage;
 import com.ruoyi.domain.PutStorage;
+import com.ruoyi.domain.Storage;
+import com.ruoyi.vo.GetStorageInfoVo;
 
 /**
  * rukuService接口
@@ -58,4 +62,6 @@ public interface IPutStorageService
      * @return 结果
      */
     public int deletePutStorageById(Long id);
+
+    GetStorageInfoVo selectPutStorageByAllName(GetStorage getStorage);
 }

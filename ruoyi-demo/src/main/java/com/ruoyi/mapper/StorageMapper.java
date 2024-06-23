@@ -75,4 +75,6 @@ public interface StorageMapper
     Storage selectStorageByName(@Param("productName") String productName,@Param("storageName") String stortageName);
 
     void updateStorageByAllName(Storage storage);
+
+    void deleteStorageByAllName(@Param("productName") String productName, @Param("stortageName") String stortageName);
 }

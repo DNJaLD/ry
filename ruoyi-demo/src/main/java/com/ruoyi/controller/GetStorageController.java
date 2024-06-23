@@ -3,6 +3,9 @@ package com.ruoyi.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.domain.Storage;
+import com.ruoyi.service.impl.GetStorageServiceImpl;
+import com.ruoyi.service.impl.PutStorageServiceImpl;
 import com.ruoyi.vo.GetStorageInfoVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,10 @@ public class GetStorageController extends BaseController
 {
     @Autowired
     private IGetStorageService getStorageService;
+    @Autowired
+    private PutStorageServiceImpl putStorageServiceImpl;
+    @Autowired
+    private GetStorageServiceImpl getStorageServiceImpl;
 
     /**
      * 查询chuku列表
@@ -72,6 +79,18 @@ public class GetStorageController extends BaseController
     }
 
     /**
+     * 获取chuku详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('ruoyi-demo:getstorage:getEditInfo')")
+    @PostMapping("/getEditInfo")
+    public AjaxResult getEditInfo(@RequestBody GetStorage getStorage)
+    {
+
+        return success(getStorageServiceImpl.selectGetStorageByAllName(getStorage));
+
+    }
+
+    /**
      * 新增chuku
      */
     @PreAuthorize("@ss.hasPermi('ruoyi-demo:getstorage:add')")
@@ -79,7 +98,15 @@ public class GetStorageController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody GetStorage getStorage)
     {
-        return toAjax(getStorageService.insertGetStorage(getStorage));
+
+        System.out.println("*******************++\t"+getStorage);
+        int i = getStorageService.insertGetStorage(getStorage);
+
+        if (i==0){
+            return warn("沒這麽多");
+        }else {
+            return toAjax(i);
+        }
     }
 
     /**
@@ -110,6 +137,9 @@ public class GetStorageController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+
+
+
         return toAjax(getStorageService.deleteGetStorageByIds(ids));
     }
 }

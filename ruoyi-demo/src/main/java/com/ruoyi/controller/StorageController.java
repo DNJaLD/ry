@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * cangkuController
- * 
+ *
  * @author ruoyi
  * @date 2024-06-19
  */
@@ -96,9 +96,18 @@ public class StorageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('ruoyi-demo:storage:remove')")
     @Log(title = "cangku", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+	@DeleteMapping("/{storageName}")
+    public AjaxResult remove(@PathVariable("storageName") String storageName)
     {
-        return toAjax(storageService.deleteStorageByIds(ids));
+        int status = storageService.deleteStorageWithNoProduct(storageName);
+
+        if (status>0){
+            return success("删库成功");
+        }else if (status<0){
+            return warn("操作失败");
+        }else {
+            return warn("还有商品存在不允许删库");
+        }
+
     }
 }

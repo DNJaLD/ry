@@ -1,5 +1,6 @@
 package com.ruoyi.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,8 +80,15 @@ public class PutStorageController extends BaseController
     {
         System.out.println("输入的入库单信息=="+putStorage);
 
+        int i = putStorageService.insertPutStorage(putStorage);
+        if (i==0){
+            return error("金額不對");
+        }else if (i>0){
+            return toAjax(1);
+        }else {
+            return error() ;
+        }
 
-        return toAjax(putStorageService.insertPutStorage(putStorage));
     }
 
     /**
@@ -106,6 +114,13 @@ public class PutStorageController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(putStorageService.deletePutStorageByIds(ids));
+
+       return toAjax( putStorageService.deletePutStorageByIds(ids));
+
+
     }
+
+
+
+
 }

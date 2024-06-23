@@ -97,8 +97,8 @@ public class ProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('ruoyi-demo:product:remove')")
     @Log(title = "shangpin", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+    public AjaxResult remove(@PathVariable Long ids)
     {
-        return toAjax(productService.deleteProductByIds(ids));
+        return toAjax(productService.deleteProductById(ids));
     }
 }

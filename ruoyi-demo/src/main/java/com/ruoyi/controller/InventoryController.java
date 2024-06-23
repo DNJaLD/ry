@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * kucunController
- * 
+ *
  * @author ruoyi
  * @date 2024-06-19
  */
@@ -99,6 +99,13 @@ public class InventoryController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(inventoryService.deleteInventoryByIds(ids));
+
+        int i = inventoryService.deleteInventoryByIds(ids);
+
+        if (i==0){
+            return warn("还有该商品未出库请出库所有该商品在删");
+        }
+
+        return toAjax(1);
     }
 }

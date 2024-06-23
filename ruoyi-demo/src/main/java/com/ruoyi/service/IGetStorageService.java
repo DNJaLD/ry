@@ -59,4 +59,6 @@ public interface IGetStorageService
      * @return 结果
      */
     public int deleteGetStorageById(Long id);
+
+    GetStorageInfoVo selectGetStorageByAllName(GetStorage getStorage);
 }

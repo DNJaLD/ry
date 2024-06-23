@@ -9,19 +9,19 @@ import com.ruoyi.service.IInventoryService;
 
 /**
  * kucunService业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2024-06-19
  */
 @Service
-public class InventoryServiceImpl implements IInventoryService 
+public class InventoryServiceImpl implements IInventoryService
 {
     @Autowired
     private InventoryMapper inventoryMapper;
 
     /**
      * 查询kucun
-     * 
+     *
      * @param id kucun主键
      * @return kucun
      */
@@ -33,7 +33,7 @@ public class InventoryServiceImpl implements IInventoryService
 
     /**
      * 查询kucun列表
-     * 
+     *
      * @param inventory kucun
      * @return kucun
      */
@@ -45,7 +45,7 @@ public class InventoryServiceImpl implements IInventoryService
 
     /**
      * 新增kucun
-     * 
+     *
      * @param inventory kucun
      * @return 结果
      */
@@ -57,7 +57,7 @@ public class InventoryServiceImpl implements IInventoryService
 
     /**
      * 修改kucun
-     * 
+     *
      * @param inventory kucun
      * @return 结果
      */
@@ -69,19 +69,25 @@ public class InventoryServiceImpl implements IInventoryService
 
     /**
      * 批量删除kucun
-     * 
+     *
      * @param ids 需要删除的kucun主键
      * @return 结果
      */
     @Override
     public int deleteInventoryByIds(Long[] ids)
     {
-        return inventoryMapper.deleteInventoryByIds(ids);
+
+        Inventory inventory = inventoryMapper.selectInventoryById(ids[0]);
+        if (inventory.getTotalProduct()!=0){
+            return 0;
+        }
+
+        return inventoryMapper.deleteInventoryById(ids[0]);
     }
 
     /**
      * 删除kucun信息
-     * 
+     *
      * @param id kucun主键
      * @return 结果
      */

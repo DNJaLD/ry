@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,7 @@ public class SysDictDataController extends BaseController
     public AjaxResult dictType(@PathVariable String dictType)
     {
         List<SysDictData> data = dictTypeService.selectDictDataByType(dictType);
+
         if (StringUtils.isNull(data))
         {
             data = new ArrayList<SysDictData>();

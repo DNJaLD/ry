@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productName != null and productName != ''">product_name,</if>
             <if test="productId != null">product_id,</if>
             <if test="prouctNumber != null">prouct_number,</if>
+            <if test="productPrice != null">product_price,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -47,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productName != null and productName != ''">#{productName},</if>
             <if test="productId != null">#{productId},</if>
             <if test="prouctNumber != null">#{prouctNumber},</if>
+            <if test="productPrice != null">#{productPrice},</if>
          </trim>
     </insert>
 
@@ -65,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="productId != null">product_id = #{productId},</if>
             <if test="prouctNumber != null">prouct_number = #{prouctNumber},</if>
+            <if test="productPrice != null">prouct_number = #{productPrice},</if>
         </trim>
         where storage_name = #{storageName} and product_name =#{productName}
     </update>
@@ -78,6 +81,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteStorageByAllName">
+        delete from storage
+               where storage_name = #{storageName}
+                    and product_name = #{productName}
+
     </delete>
 
     <select id="selectStorageByStorageName" resultMap="StorageResult">
