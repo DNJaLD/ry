@@ -114,8 +114,14 @@ public class PutStorageController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+        int i = putStorageService.deletePutStorageByIds(ids);
+        if (i==0){
+            return warn("不可删除该表，该商品以出库");
+        }else {
+            return toAjax(i);
+        }
 
-       return toAjax( putStorageService.deletePutStorageByIds(ids));
+//        return toAjax( putStorageService.deletePutStorageByIds(ids));
 
 
     }

@@ -187,6 +187,12 @@ public class GetStorageServiceImpl implements IGetStorageService
             if (storage.getProuctNumber()-getStorage.getProductNumber()<0){
                 return 0 ;
             }
+
+            storage.setProuctNumber(getStorage.getProductNumber());
+
+            storageMapper.updateStorage(storage);
+
+
             Long productPrice = storage.getProductPrice();
 
             storage.setProuctNumber(storage.getProuctNumber()+DProductNumber);
@@ -200,7 +206,7 @@ public class GetStorageServiceImpl implements IGetStorageService
 
             inventoryMapper.updateInventory(inventory);
 
-            //删除入库单
+            //删除出库单
 
             getStorageMapper.deleteGetStorageById(id);
         }

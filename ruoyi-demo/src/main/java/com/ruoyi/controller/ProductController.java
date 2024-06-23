@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * shangpinController
- * 
+ *
  * @author ruoyi
  * @date 2024-06-19
  */
@@ -99,6 +99,12 @@ public class ProductController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long ids)
     {
-        return toAjax(productService.deleteProductById(ids));
+        int i = productService.deleteProductById(ids);
+        if (i==0){
+            return warn("不可删除该商品，该商品在库存中还有货物");
+        }else {
+            return toAjax(i);
+        }
+
     }
 }

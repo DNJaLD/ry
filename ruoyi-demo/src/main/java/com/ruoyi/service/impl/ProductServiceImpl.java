@@ -165,6 +165,7 @@ public class ProductServiceImpl implements IProductService
         if (inventory == null){
             return productMapper.deleteProductById(id);
         }else if (inventory.getTotalProduct()!=0){
+
             return 0 ;
         }
         else {

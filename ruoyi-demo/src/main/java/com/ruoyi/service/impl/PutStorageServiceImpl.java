@@ -409,6 +409,10 @@ public class PutStorageServiceImpl implements IPutStorageService
         for (Long id : ids) {
             PutStorage putStorage = putStorageMapper.selectPutStorageById(id);
 
+            if (putStorage==null){
+                return 0 ;
+            }
+
             String DProductName = putStorage.getProductName();
             String DStortageName = putStorage.getStortageName();
             Long DPrice = putStorage.getPrice();
@@ -421,10 +425,13 @@ public class PutStorageServiceImpl implements IPutStorageService
             Long productPrice = storage.getProductPrice();
 
             if ((storage.getProuctNumber() - DProductNumber)==0){
+                //
                 storageMapper.deleteStorageById(storage.getId());
-            }else {
+            }else if (storage.getProuctNumber() > DProductNumber){
                 storage.setProuctNumber(storage.getProuctNumber() - DProductNumber);
                 storageMapper.updateStorage(storage);
+            }else {
+                return 0 ;
             }
 
             //更新库存
