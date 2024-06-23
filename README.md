@@ -11,6 +11,8 @@
 
 ## 平台简介
 
+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
+
 若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
 
 * 前端采用Vue、Element UI。
